@@ -52,7 +52,7 @@ Execute a aplicação:
 streamlit run app.py
 ```
 
-📁 Estrutura de Arquivos
+## 📁 Estrutura de Arquivos
 
 app.py: Código principal da aplicação Streamlit.
 
