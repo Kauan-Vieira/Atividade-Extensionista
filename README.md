@@ -34,8 +34,9 @@ Acesse a pasta do projeto:
 
 ```Bash
 cd Atividade-extensionista
-Crie e ative um ambiente virtual (Windows):
 ```
+Crie e ative um ambiente virtual (Windows):
+
 ```Bash
 python -m venv .venv
 .\.venv\Scripts\activate
