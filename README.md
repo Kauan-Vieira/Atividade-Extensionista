@@ -54,14 +54,14 @@ streamlit run app.py
 
 ## 📁 Estrutura de Arquivos
 
-app.py: Código principal da aplicação Streamlit.
+### app.py: Código principal da aplicação Streamlit.
 
-style.css: Arquivo de estilização visual da interface.
+### style.css: Arquivo de estilização visual da interface.
 
-requirements.txt: Lista de bibliotecas necessárias para rodar o projeto.
+### requirements.txt: Lista de bibliotecas necessárias para rodar o projeto.
 
-src/Dados-Bairros/: Pasta contendo o arquivo bairros_curitiba.csv com a base de dados.
+### src/Dados-Bairros/: Pasta contendo o arquivo bairros_curitiba.csv com a base de dados.
 
-.gitignore: Arquivo para ignorar pastas locais (como o .venv) no controle de versão.
+### .gitignore: Arquivo para ignorar pastas locais (como o .venv) no controle de versão.
 
-Desenvolvido por Kauan para a Atividade Extensionista Final.
+#### Desenvolvido por Kauan para a Atividade Extensionista Final.
