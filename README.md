@@ -53,6 +53,7 @@ streamlit run app.py
 ```
 
 📁 Estrutura de Arquivos
+
 app.py: Código principal da aplicação Streamlit.
 
 style.css: Arquivo de estilização visual da interface.
