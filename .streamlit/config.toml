@@ -1,0 +1,24 @@
+# Paleta do Curitiba Verde para os temas claro e escuro.
+# O usuário pode alternar entre eles em ⋮ > Settings > Theme.
+
+[theme.light]
+primaryColor = "#00b894"
+backgroundColor = "#f3f1f1"
+secondaryBackgroundColor = "#ffffff"
+textColor = "#1b5e20"
+borderColor = "#adadad"
+
+[theme.light.sidebar]
+backgroundColor = "#dedede"
+secondaryBackgroundColor = "#ffffff"
+
+[theme.dark]
+primaryColor = "#00b894"
+backgroundColor = "#101a12"
+secondaryBackgroundColor = "#1c2a1f"
+textColor = "#d6ecd8"
+borderColor = "#3d5a42"
+
+[theme.dark.sidebar]
+backgroundColor = "#17241a"
+secondaryBackgroundColor = "#1c2a1f"

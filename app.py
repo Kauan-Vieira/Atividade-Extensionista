@@ -46,16 +46,23 @@ st.sidebar.write(f"**Status da Região:** {dados['Status']}")
 st.title("Mapa Interativo das Áreas Verdes de Curitiba")
 st.write("Explore as regiões da cidade. Bolinhas maiores representam mais área verde.")
 
+# Bairros com 0% sumiriam do mapa; garante um tamanho mínimo para as bolinhas
+df["Tamanho"] = df["saude_verde"].clip(lower=5)
+
+# Mapa claro ou escuro conforme o tema escolhido pelo usuário
+tema_escuro = st.context.theme.type == "dark"
+
 fig = px.scatter_map(
-    df, lat="Latitude", lon="Longitude", size="saude_verde", color="Cor_Mapa",
+    df, lat="Latitude", lon="Longitude", size="Tamanho", color="Cor_Mapa",
     color_discrete_map="identity", hover_name="NOME",
-    hover_data={"Latitude": False, "Longitude": False, "saude_verde": True, "Status": True},
-    zoom=10.5, height=550
+    hover_data={"Latitude": False, "Longitude": False, "Tamanho": False, "saude_verde": True, "Status": True},
+    labels={"saude_verde": "Cobertura Vegetal (%)"},
+    size_max=25, zoom=10.5, height=550
 )
 
-# Mapa fixo no estilo claro (carto-positron)
 fig.update_layout(
-    map_style="carto-positron", margin={"r":0,"t":0,"l":0,"b":0},
+    map_style="carto-darkmatter" if tema_escuro else "carto-positron",
+    margin={"r":0,"t":0,"l":0,"b":0},
     paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)'
 )
 st.plotly_chart(fig, width="stretch")
@@ -63,9 +70,9 @@ st.plotly_chart(fig, width="stretch")
 # CARDS INFERIORES
 col1, col2 = st.columns(2)
 with col1:
-    st.markdown(f"<div class='metric-card'><h4>Cobertura Vegetal ({bairro})</h4><h2 style='color:#00b894 !important'>{dados['saude_verde']}%</h2></div>", unsafe_allow_html=True)
+    st.markdown(f"<div class='metric-card positivo'><h4>Cobertura Vegetal ({bairro})</h4><h2>{dados['saude_verde']}%</h2></div>", unsafe_allow_html=True)
 with col2:
-    st.markdown(f"<div class='metric-card'><h4>Déficit de Árvores ({bairro})</h4><h2 style='color:#e84118 !important'>{100 - dados['saude_verde']}%</h2></div>", unsafe_allow_html=True)
+    st.markdown(f"<div class='metric-card negativo'><h4>Déficit de Árvores ({bairro})</h4><h2>{100 - dados['saude_verde']}%</h2></div>", unsafe_allow_html=True)
 
 st.markdown("---")
 
