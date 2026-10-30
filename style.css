@@ -34,15 +34,10 @@
 /* Caixas de texto e seletor */
 .stTextInput input, .stTextArea textarea { border-radius: 8px; }
 
-/* Formulário e upload */
+/* Formulário */
 [data-testid="stForm"] {
     border-radius: 12px;
     padding: 25px;
-}
-[data-testid="stFileUploaderDropzone"] {
-    border: 2px dashed rgba(127, 127, 127, 0.5);
-    border-radius: 10px;
-    padding: 20px;
 }
 
 /* Botão de Enviar Sugestão (contraste do texto branco acima de 4,5:1) */

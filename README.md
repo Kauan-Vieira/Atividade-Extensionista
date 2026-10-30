@@ -10,13 +10,13 @@ O **Curitiba Verde** é uma aplicação web interativa desenvolvida como Ativida
 
 🌐 **Acesse o app publicado:** https://curitiba-verde.streamlit.app/
 
-Através de um mapa interativo, os usuários podem visualizar quais regiões possuem maior déficit de árvores e utilizar um formulário integrado para sugerir locais que precisam de novos plantios, podendo inclusive anexar fotos do endereço.
+Através de um mapa interativo, os usuários podem visualizar quais regiões possuem maior déficit de árvores e utilizar um formulário integrado para sugerir locais que precisam de novos plantios.
 
 ## ✨ Funcionalidades
 - **Mapa Interativo:** Contorno dos 75 bairros de Curitiba pintado conforme a cobertura vegetal. Clique em um bairro para ver os dados dele.
 - **Cores Acessíveis:** Três status (Crítico, Alerta e Bom) com cores distinguíveis também por pessoas com daltonismo.
 - **Painel de Métricas:** Consulta rápida da porcentagem de cobertura vegetal e déficit de árvores filtrada por bairro.
-- **Engajamento Comunitário:** Formulário interativo para os cidadãos sugerirem novos plantios, com suporte a upload de imagens.
+- **Engajamento Comunitário:** Formulário para os cidadãos sugerirem novos plantios. As sugestões ficam salvas numa planilha do Google Sheets.
 - **Temas Claro e Escuro:** O visual se adapta ao tema escolhido em ⋮ > Settings > Theme.
 
 ## 🛠️ Tecnologias Utilizadas
@@ -56,6 +56,18 @@ Execute a aplicação:
 streamlit run app.py
 ```
 
+### 📝 Configurando a planilha de sugestões (Google Sheets)
+
+Sem esta configuração o app funciona normalmente, mas o formulário avisa que o envio ainda não está configurado.
+
+1. No [Google Cloud Console](https://console.cloud.google.com/), crie um projeto e ative a **Google Sheets API**.
+2. Em **IAM e administrador > Contas de serviço**, crie uma conta de serviço. Na aba **Chaves**, adicione uma chave do tipo **JSON** e baixe o arquivo.
+3. Crie uma planilha no Google Sheets e **compartilhe** com o e-mail da conta de serviço (o `client_email` do JSON), com permissão de **Editor**.
+4. Copie `.streamlit/secrets.toml.example` para `.streamlit/secrets.toml` e preencha com o link da planilha e os dados do JSON.
+5. No Streamlit Cloud, cole o mesmo conteúdo em **Manage app > Settings > Secrets**.
+
+O arquivo `secrets.toml` está no `.gitignore`: **nunca** envie as credenciais para o GitHub.
+
 ### 🧪 Rodando os testes
 
 ```Bash
@@ -74,12 +86,14 @@ Os testes também rodam automaticamente no GitHub Actions a cada push e pull req
 │   └── sobre.py               # Sobre o projeto, legenda das cores e fontes
 ├── src/
 │   ├── dados.py               # Leitura dos dados, status e paleta de cores
+│   ├── planilha.py            # Gravação das sugestões no Google Sheets
 │   └── Dados-Bairros/
 │       ├── bairros_curitiba.csv       # Cobertura vegetal por bairro
 │       └── bairros_curitiba.geojson   # Contorno dos bairros (IPPUC)
 ├── tests/test_app.py          # Testes automáticos (pytest + AppTest do Streamlit)
 ├── style.css                  # Estilização visual da interface
 ├── .streamlit/config.toml     # Paletas dos temas claro e escuro
+├── .streamlit/secrets.toml.example  # Modelo das credenciais da planilha
 ├── requirements.txt           # Bibliotecas do app (versões fixas)
 └── requirements-dev.txt       # Bibliotecas para rodar os testes
 ```
