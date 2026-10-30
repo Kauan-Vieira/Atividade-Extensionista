@@ -35,7 +35,24 @@ except FileNotFoundError:
 # --- 4. SIDEBAR (MENU LATERAL) ---
 st.sidebar.title("🍃 Curitiba Verde")
 st.sidebar.markdown("---")
-bairro = st.sidebar.selectbox("Selecione um Bairro no Menu:", df['NOME'].unique())
+# Clicar numa bolinha do mapa seleciona o bairro no menu
+def bairro_clicado_no_mapa():
+    pontos = st.session_state.get("mapa", {}).get("selection", {}).get("points", [])
+    return pontos[0]["customdata"][0] if pontos else None
+
+def ao_trocar_no_menu():
+    # Escolha feita no menu vale mais que um clique antigo no mapa
+    st.session_state["ultimo_clique"] = bairro_clicado_no_mapa()
+
+clique = bairro_clicado_no_mapa()
+if clique and clique != st.session_state.get("ultimo_clique"):
+    st.session_state["bairro"] = clique
+    st.session_state["ultimo_clique"] = clique
+
+bairro = st.sidebar.selectbox(
+    "Selecione um Bairro no Menu:", df['NOME'].unique(),
+    key="bairro", on_change=ao_trocar_no_menu
+)
 dados = df[df['NOME'] == bairro].iloc[0]
 
 st.sidebar.markdown(f"### 📍 {bairro}")
@@ -44,7 +61,7 @@ st.sidebar.write(f"**Status da Região:** {dados['Status']}")
 
 # --- 5. PAINEL PRINCIPAL (MAPA) ---
 st.title("Mapa Interativo das Áreas Verdes de Curitiba")
-st.write("Explore as regiões da cidade. Bolinhas maiores representam mais área verde.")
+st.write("Explore as regiões da cidade. Bolinhas maiores representam mais área verde. Clique em uma bolinha para ver os dados do bairro.")
 
 # Bairros com 0% sumiriam do mapa; garante um tamanho mínimo para as bolinhas
 df["Tamanho"] = df["saude_verde"].clip(lower=5)
@@ -54,7 +71,7 @@ tema_escuro = st.context.theme.type == "dark"
 
 fig = px.scatter_map(
     df, lat="Latitude", lon="Longitude", size="Tamanho", color="Cor_Mapa",
-    color_discrete_map="identity", hover_name="NOME",
+    color_discrete_map="identity", hover_name="NOME", custom_data=["NOME"],
     hover_data={"Latitude": False, "Longitude": False, "Tamanho": False, "saude_verde": True, "Status": True},
     labels={"saude_verde": "Cobertura Vegetal (%)"},
     size_max=25, zoom=10.5, height=550
@@ -63,9 +80,10 @@ fig = px.scatter_map(
 fig.update_layout(
     map_style="carto-darkmatter" if tema_escuro else "carto-positron",
     margin={"r":0,"t":0,"l":0,"b":0},
-    paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)'
+    paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
+    uirevision="mapa"  # mantém o zoom do usuário depois de cada clique
 )
-st.plotly_chart(fig, width="stretch")
+st.plotly_chart(fig, width="stretch", key="mapa", on_select="rerun", selection_mode="points")
 
 # CARDS INFERIORES
 col1, col2 = st.columns(2)
