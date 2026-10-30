@@ -1,11 +1,18 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+from pathlib import Path
 
-# --- 1. CARREGAMENTO DOS DADOS ---
+# Caminhos relativos à pasta do app.py (funciona de qualquer diretório)
+BASE_DIR = Path(__file__).resolve().parent
+
+# --- 1. CONFIGURAÇÃO DA INTERFACE (deve ser o primeiro comando do Streamlit) ---
+st.set_page_config(page_title="Curitiba Verde", layout="wide")
+
+# --- 2. CARREGAMENTO DOS DADOS ---
 @st.cache_data
 def load_data():
-    df = pd.read_csv("src/Dados-Bairros/bairros_curitiba.csv")
+    df = pd.read_csv(BASE_DIR / "src" / "Dados-Bairros" / "bairros_curitiba.csv")
     
     def definir_status(valor):
         if valor < 15: return "Crítico"
@@ -18,12 +25,9 @@ def load_data():
 
 df = load_data()
 
-# --- 2. CONFIGURAÇÃO DA INTERFACE ---
-st.set_page_config(page_title="Curitiba Verde", layout="wide")
-
 # --- 3. LENDO O ARQUIVO CSS EXTERNO ---
 try:
-    with open("style.css", encoding="utf-8") as f:
+    with open(BASE_DIR / "style.css", encoding="utf-8") as f:
         st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 except FileNotFoundError:
     st.warning("⚠️ Arquivo style.css não encontrado! Crie o arquivo na mesma pasta do app.py.")
@@ -42,7 +46,7 @@ st.sidebar.write(f"**Status da Região:** {dados['Status']}")
 st.title("Mapa Interativo das Áreas Verdes de Curitiba")
 st.write("Explore as regiões da cidade. Bolinhas maiores representam mais área verde.")
 
-fig = px.scatter_mapbox(
+fig = px.scatter_map(
     df, lat="Latitude", lon="Longitude", size="saude_verde", color="Cor_Mapa",
     color_discrete_map="identity", hover_name="NOME",
     hover_data={"Latitude": False, "Longitude": False, "saude_verde": True, "Status": True},
@@ -51,10 +55,10 @@ fig = px.scatter_mapbox(
 
 # Mapa fixo no estilo claro (carto-positron)
 fig.update_layout(
-    mapbox_style="carto-positron", margin={"r":0,"t":0,"l":0,"b":0},
+    map_style="carto-positron", margin={"r":0,"t":0,"l":0,"b":0},
     paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)'
 )
-st.plotly_chart(fig, use_container_width=True)
+st.plotly_chart(fig, width="stretch")
 
 # CARDS INFERIORES
 col1, col2 = st.columns(2)
