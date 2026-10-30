@@ -13,9 +13,10 @@ O **Curitiba Verde** é uma aplicação web interativa desenvolvida como Ativida
 Através de um mapa interativo, os usuários podem visualizar quais regiões possuem maior déficit de árvores e utilizar um formulário integrado para sugerir locais que precisam de novos plantios.
 
 ## ✨ Funcionalidades
-- **Mapa Interativo:** Contorno dos 75 bairros de Curitiba pintado conforme a cobertura vegetal. Clique em um bairro para ver os dados dele.
+- **Mapa Interativo:** Contorno dos 75 bairros de Curitiba pintado conforme a cobertura de árvores, medida por satélite. Clique em um bairro para ver os dados dele.
+- **Evolução da Vegetação:** Gráfico com a vegetação de cada bairro desde 2017, atualizado automaticamente todo ano.
 - **Cores Acessíveis:** Três status (Crítico, Alerta e Bom) com cores distinguíveis também por pessoas com daltonismo.
-- **Painel de Métricas:** Consulta rápida da porcentagem de cobertura vegetal e déficit de árvores filtrada por bairro.
+- **Painel de Métricas:** Cobertura de árvores do bairro e quanto a vegetação mudou desde 2017.
 - **Engajamento Comunitário:** Formulário para os cidadãos sugerirem novos plantios. As sugestões ficam salvas numa planilha do Google Sheets.
 - **Temas Claro e Escuro:** O visual se adapta ao tema escolhido em ⋮ > Settings > Theme.
 
@@ -88,17 +89,43 @@ Os testes também rodam automaticamente no GitHub Actions a cada push e pull req
 │   ├── dados.py               # Leitura dos dados, status e paleta de cores
 │   ├── planilha.py            # Gravação das sugestões no Google Sheets
 │   └── Dados-Bairros/
-│       ├── bairros_curitiba.csv       # Cobertura vegetal por bairro
+│       ├── bairros_curitiba.csv       # Cobertura de árvores por bairro (WorldCover)
+│       ├── historico_vegetacao.csv    # Vegetação por bairro e ano (MapBiomas)
+│       ├── fontes.json                # Fonte e data de cada cálculo
 │       └── bairros_curitiba.geojson   # Contorno dos bairros (IPPUC)
+├── scripts/coletar_cobertura.py  # Coleta dos dados de satélite
 ├── tests/test_app.py          # Testes automáticos (pytest + AppTest do Streamlit)
 ├── style.css                  # Estilização visual da interface
 ├── .streamlit/config.toml     # Paletas dos temas claro e escuro
 ├── .streamlit/secrets.toml.example  # Modelo das credenciais da planilha
 ├── requirements.txt           # Bibliotecas do app (versões fixas)
-└── requirements-dev.txt       # Bibliotecas para rodar os testes
+├── requirements-dev.txt       # Bibliotecas para rodar os testes
+└── requirements-coleta.txt    # Bibliotecas do robô de coleta
 ```
 
 ## 📊 Fontes dos Dados
+- **Cobertura de árvores (mapa e status):** [ESA WorldCover](https://esa-worldcover.org/) 10 m, ano 2021. É a parte da área de cada bairro classificada como árvores.
+- **Evolução da vegetação (2017 em diante):** [MapBiomas](https://brasil.mapbiomas.org/), coleção de 10 m. Inclui árvores, campos, áreas úmidas, silvicultura e pastagens.
 - **Contornos dos bairros:** IPPUC, a partir do repositório [geo-curitiba](https://github.com/gustavokira/geo-curitiba). Os contornos foram simplificados para deixar o app mais leve (diferença de área menor que 0,05%).
+- **Status:** segue a regra 3-30-300 (Konijnendijk, 2023), que recomenda pelo menos 30% de copa de árvores por bairro.
+
+O arquivo `src/Dados-Bairros/fontes.json` guarda a fonte, as classes usadas e a data de cada cálculo.
+
+### 🤖 Atualização automática dos dados
+
+O workflow `Atualizar dados de vegetação` roda no dia 3 de cada mês e confere se o MapBiomas publicou um ano novo. Se publicou:
+
+1. calcula a vegetação dos 75 bairros com `scripts/coletar_cobertura.py`;
+2. confere os números (75 bairros, valores entre 0% e 100%, média plausível e nenhum salto absurdo de um ano para o outro);
+3. roda os testes;
+4. abre um pull request com os dados novos e um resumo do que mudou.
+
+Nada vai para o ar sem alguém revisar e fazer o merge. Para rodar na mão: aba **Actions > Atualizar dados de vegetação > Run workflow**, ou no computador:
+
+```Bash
+pip install -r requirements-coleta.txt
+python scripts/coletar_cobertura.py              # anos novos do MapBiomas
+python scripts/coletar_cobertura.py --worldcover # recalcula a cobertura de árvores
+```
 
 #### Desenvolvido por Kauan para a Atividade Extensionista Final.

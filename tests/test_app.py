@@ -3,7 +3,11 @@ from pathlib import Path
 import pytest
 from streamlit.testing.v1 import AppTest
 
-from src.dados import CORES_STATUS, carregar_bairros, carregar_contornos, definir_status
+from scripts.coletar_cobertura import validar_ano
+from src.dados import (
+    CORES_STATUS, carregar_bairros, carregar_contornos, carregar_fontes, carregar_historico,
+    definir_status, formatar_pct,
+)
 
 APP = str(Path(__file__).resolve().parent.parent / "app.py")
 
@@ -26,8 +30,46 @@ def test_todo_bairro_do_csv_tem_contorno():
     assert set(carregar_bairros()["NOME"]) == nomes_contornos
 
 
+def test_cobertura_arborea_entre_0_e_100():
+    cobertura = carregar_bairros()["cobertura_arborea"]
+    assert cobertura.between(0, 100).all()
+
+
+def test_historico_tem_todos_os_bairros_em_todos_os_anos():
+    historico = carregar_historico()
+    nomes = set(carregar_bairros()["NOME"])
+    for ano, grupo in historico.groupby("ano"):
+        assert set(grupo["NOME"]) == nomes, ano
+    assert historico["vegetacao"].between(0, 100).all()
+    assert sorted(historico["ano"].unique()) == carregar_fontes()["historico_vegetacao"]["anos"]
+
+
+def test_formatar_pct():
+    assert formatar_pct(13.6) == "13,6%"
+    assert formatar_pct(-0.25, sinal=True) == "-0,2 p.p."
+    assert formatar_pct(1.3, sinal=True) == "+1,3 p.p."
+
+
+# --- CONFERÊNCIAS DO ROBÔ DE COLETA ---
+def test_validar_ano_aceita_dados_atuais():
+    historico = carregar_historico()
+    ultimo = historico[historico["ano"] == historico["ano"].max()].set_index("NOME")["vegetacao"]
+    assert validar_ano(ultimo) == []
+
+
+def test_validar_ano_recusa_bairro_faltando_e_salto_absurdo():
+    import pandas as pd
+
+    anterior = pd.Series([20.0] * 75, index=[f"B{i}" for i in range(75)])
+    assert validar_ano(anterior.iloc[:74])  # faltou um bairro
+    salto = anterior.copy()
+    salto["B0"] = 90.0
+    assert any("variação" in p for p in validar_ano(salto, anterior))
+    assert any("fora do intervalo" in p for p in validar_ano(anterior.replace(20.0, 120.0)))
+
+
 @pytest.mark.parametrize("cobertura, status", [
-    (0, "Crítico"), (14, "Crítico"), (15, "Alerta"), (39, "Alerta"), (40, "Bom"), (100, "Bom"),
+    (0, "Crítico"), (14.9, "Crítico"), (15, "Alerta"), (29.9, "Alerta"), (30, "Bom"), (100, "Bom"),
 ])
 def test_faixas_de_status(cobertura, status):
     assert definir_status(cobertura) == status
