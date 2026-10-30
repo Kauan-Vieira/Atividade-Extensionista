@@ -1,85 +1,51 @@
-/* === DEFINIÇÃO DAS CORES FIXAS === */
-:root {
-    --cor-fundo: #f3f1f1;
-    --cor-sidebar: #dedede;
-    --cor-texto: #1b5e20;
-    --cor-card: #ffffff;
-    --borda-form: #adadad;
-}
+/* As cores de fundo, texto e bordas vêm do tema (.streamlit/config.toml),
+   que tem versões clara e escura. Aqui ficam só ajustes de forma, com
+   cores que funcionam nos dois temas. */
 
-/* Fundo Geral e Sidebar */
-[data-testid="stAppViewContainer"] { background-color: var(--cor-fundo) !important; }
-[data-testid="stHeader"] { background-color: rgba(0,0,0,0) !important; }
-[data-testid="stSidebar"] { background-color: var(--cor-sidebar) !important; }
-
-/* Textos Gerais */
-h1, h2, h3, h4, p, span, label, div { 
-    color: var(--cor-texto) !important; 
-}
+/* Cabeçalho transparente */
+[data-testid="stHeader"] { background-color: transparent; }
 
 /* Cards de Métrica */
-.metric-card { 
-    background-color: var(--cor-card) !important; 
-    padding: 20px; 
-    border-radius: 12px; 
-    border-left: 6px solid #00b894; 
-    box-shadow: 0px 4px 6px rgba(0,0,0,0.1); 
-    text-align: center; 
+.metric-card {
+    background-color: rgba(127, 127, 127, 0.08);
+    border: 1px solid rgba(127, 127, 127, 0.25);
+    border-left: 6px solid #00b894;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
     margin-bottom: 20px;
 }
+.metric-card h4 { margin: 0; }
+.metric-card h2 { margin: 0; padding: 0.25rem 0 0; }
+.metric-card.positivo h2 { color: #00b894; }
+.metric-card.negativo { border-left-color: #e84118; }
+.metric-card.negativo h2 { color: #e84118; }
 
-/* CAIXAS DE TEXTO (Inputs e TextAreas) */
-.stTextInput input, .stTextArea textarea {
-    background-color: var(--cor-card) !important;
-    color: var(--cor-texto) !important;
-    border: 1px solid var(--borda-form) !important;
-    border-radius: 8px !important;
-}
+/* Caixas de texto e seletor */
+.stTextInput input, .stTextArea textarea { border-radius: 8px; }
 
-/* SELETOR DE BAIRROS (Selectbox) */
-div[data-baseweb="select"] > div {
-    background-color: var(--cor-card) !important;
-    color: var(--cor-texto) !important;
-    border: 1px solid var(--borda-form) !important;
-}
-
-/* LISTA DO BAIRRO (Popover) */
-div[data-baseweb="popover"] ul { background-color: var(--cor-card) !important; border: 1px solid var(--borda-form) !important; }
-div[data-baseweb="popover"] li { background-color: var(--cor-card) !important; color: var(--cor-texto) !important; }
-div[data-baseweb="popover"] li:hover { background-color: var(--cor-fundo) !important; color: #00b894 !important; }
-
-/* FORMULÁRIO E UPLOAD */
+/* Formulário e upload */
 [data-testid="stForm"] {
-    background-color: var(--cor-card) !important;
-    border: 1px solid var(--borda-form) !important;
     border-radius: 12px;
     padding: 25px;
 }
-
-[data-testid="stFileUploadDropzone"] {
-    background-color: var(--cor-card) !important;
-    border: 2px dashed var(--borda-form) !important;
-    border-radius: 10px !important;
-    padding: 20px !important;
-}
-
-[data-testid="stFileUploadDropzone"] button {
-    background-color: var(--cor-fundo) !important;
-    color: var(--cor-texto) !important;
-    border: 1px solid var(--borda-form) !important;
-    border-radius: 6px;
+[data-testid="stFileUploaderDropzone"] {
+    border: 2px dashed rgba(127, 127, 127, 0.5);
+    border-radius: 10px;
+    padding: 20px;
 }
 
 /* Botão de Enviar Sugestão */
 [data-testid="stFormSubmitButton"] button {
-    background-color: #ffffff !important;
-    color: white !important;
-    border: none !important;
-    border-radius: 8px !important;
+    background-color: #00b894;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
     font-weight: bold;
     width: 100%;
 }
-
 [data-testid="stFormSubmitButton"] button:hover {
-    background-color: #7bb87e !important;
-} 
+    background-color: #7bb87e;
+    color: #ffffff;
+}
