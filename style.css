@@ -18,6 +18,7 @@
 }
 .metric-card h4 { margin: 0; }
 .metric-card h2 { margin: 0; padding: 0.25rem 0 0; }
+.metric-card p { margin: 0.25rem 0 0; font-size: 0.85rem; opacity: 0.8; }
 
 /* Quadradinho com a cor do status, sempre acompanhado do texto */
 .selo-status {

@@ -1,0 +1,40 @@
+{
+  "cobertura_arborea": {
+    "fonte": "ESA WorldCover 10 m, versão 2021 (v200)",
+    "url": "https://esa-worldcover.s3.eu-central-1.amazonaws.com/v200/2021/map/ESA_WorldCover_10m_2021_v200_S27W051_Map.tif",
+    "classes": [
+      10
+    ],
+    "ano": 2021,
+    "calculado_em": "2026-10-30"
+  },
+  "historico_vegetacao": {
+    "fonte": "MapBiomas, coleção de 10 m (coleção 4)",
+    "url": "https://storage.googleapis.com/mapbiomas-public/initiatives/brasil/lulc_10m/collection4/coverage/brazil_coverage/",
+    "classes": [
+      3,
+      4,
+      5,
+      6,
+      9,
+      11,
+      12,
+      15,
+      21,
+      49,
+      50
+    ],
+    "anos": [
+      2017,
+      2018,
+      2019,
+      2020,
+      2021,
+      2022,
+      2023,
+      2024,
+      2025
+    ],
+    "atualizado_em": "2026-10-30"
+  }
+}

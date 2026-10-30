@@ -5,7 +5,7 @@ import streamlit as st
 from src import planilha
 from src.dados import carregar_bairros
 
-bairros = list(carregar_bairros()["NOME"].sort_values())
+bairros = list(carregar_bairros()["NOME"])
 
 
 def enviar_sugestao():
